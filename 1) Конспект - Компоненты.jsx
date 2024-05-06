@@ -1,3 +1,5 @@
+Будем использовать пример my-app
+
 npx create-react-app my-app
 
 Babel и JSX

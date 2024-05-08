@@ -2,6 +2,21 @@ my-app-2
 
 Наша задача создать прототип корзины, у нас есть несколько строк каждая из которых представляет из себя Counter;
 
+------
+[SW.BAND] 2. Рефакторинг кода.mp4
+[SW.BAND] 3. Композиция компонентов.mp4
+[SW.BAND] 4. Передача данных в компонент.mp4
+[SW.BAND] 5. Передача контента компонента в сам компонент.mp4
+[SW.BAND] 6. Debug. Отладка React приложений
+[SW.BAND] 7. Props vs State.mp4
+[SW.BAND] 8. Создание и обработка событий.mp4
+[SW.BAND] 9. Обновление состояния.mp4
+[SW.BAND] 10. Передача атрибутов одной сущности.mp4
+[SW.BAND] 11. Единый источник истины.mp4
+[SW.BAND] 12. Практическое задание #1.mp4
+[SW.BAND] 13. Практическое задание #2.mp4
+------
+
 -----------------------------------------------------
 ---------[SW.BAND] 2. Рефакторинг кода.mp4
 -----------------------------------------------------
@@ -60,7 +75,6 @@ const СountersList = () => {
 };
 
 export default СountersList;
-
 
 -------------------------------------------------------------------------
 ---------[SW.BAND] 5. Передача контента компонента в сам компонент.mp4
@@ -190,7 +204,6 @@ const СountersList = () => {
 
 export default СountersList;
 
-
 -------------------------------------------------------------------------
 ---------[SW.BAND] 6. Debug. Отладка React приложений
 -------------------------------------------------------------------------
@@ -278,7 +291,6 @@ const СountersList = () => {
 };
 
 export default СountersList;
-
 
 -------------------------------------------------------------------------
 ---------[SW.BAND] 9. Обновление состояния.mp4
@@ -370,7 +382,7 @@ export default Counter;
                     onDelete={handleDelete} />
             ))}
 */
-сделать так
+сделать так, как эти свойства у нас уже повторяются выше в объявлении переменной
 
 /*{counters.map((count) => (
     <Counter
@@ -379,9 +391,197 @@ export default Counter;
         onDelete={handleDelete} />
 ))}*/
 
-
 -------------------------------------------------------------------------
 ---------[SW.BAND] 11. Единый источник истины.mp4
 -------------------------------------------------------------------------
 
+---counterList.jsx-----
 
+import React, {useState} from 'react';
+import Counter from "./counter";
+
+const СountersList = () => {
+
+    const initialState = [
+        {id : 0, value: 0, name:'Ложка'},
+        {id : 1, value: 4, name:'Тарелка'},
+        {id : 2, value: 0, name:'Вилка'}
+    ];
+        
+    const [counters, setCounters] = useState(initialState);
+    
+    const handleDelete = (id) => {
+        console.log('handleDelete', id);
+        const newCounters = counters.filter(c => c.id !== id); 
+        setCounters(newCounters);
+    };
+
+    const handleReset = () => {
+        //console.log('handleReset');
+        setCounters(initialState);
+    };
+
+    const handleUpdate = () => {
+        const updateState = [
+            {id : 0, value: 5, name:'Ложка'},
+            {id : 1, value: 9, name:'Тарелка'},
+            {id : 2, value: 11, name:'Вилка'}
+        ];
+        setCounters(updateState);
+    };
+
+    return (
+        <>
+            {counters.map((count) => (
+                <Counter
+                    key={count.id}
+                    {...count}
+                    onDelete={handleDelete} />
+            ))}
+            <button onClick={handleReset}>Сброс</button>
+            <button onClick={handleUpdate}>Новое состояние</button>
+        </>
+    )
+};
+
+export default СountersList;
+
+
+---counter.jsx----
+import React, { useState } from 'react';
+
+const Counter = (props) => {
+
+    const {value} = props;
+
+    const formatValue = () => {
+        return value === 0 ? 'empty' : value;
+    }
+
+    const getBageClasses = () => {
+        let classes = 'rounded-sm p-2 text-white mx-2 ';
+        classes += value === 0 ? 'bg-warning' : 'bg-primary';
+        return classes;
+    };
+
+    return (
+        <div>
+            <span>{props.name}</span>
+            <span className={getBageClasses()}>{formatValue()}</span>
+            <button onClick={handleIncrement}>+</button>
+            <button onClick={handleDecrement}>-</button>
+            <button onClick={() => props.onDelete(props.id)}>Удалить</button>
+        </div>
+    );
+};
+
+export default Counter;
+
+-------------------------------------------------------------------------
+---------[SW.BAND] 12. Практическое задание #1.mp4
+-------------------------------------------------------------------------
+
+----counters.jsx-----
+
+import React, { useState } from 'react';
+
+const Counter = (props) => {
+
+    const {value} = props;
+
+    const formatValue = () => {
+        return value === 0 ? 'empty' : value;
+    }
+
+    const getBageClasses = () => {
+        let classes = 'rounded-sm p-2 text-white mx-2 ';
+        classes += value === 0 ? 'bg-warning' : 'bg-primary';
+        return classes;
+    };
+
+    return (
+        <div>
+            <span>{props.name}</span>
+            <span className={getBageClasses()}>{formatValue()}</span>
+            <button onClick={() => props.onIncrement(props.id)}>+</button>
+            <button onClick={() => props.onDecrement(props.id)}>-</button>
+            <button onClick={() => props.onDelete(props.id)}>Удалить</button>
+        </div>
+    );
+};
+
+export default Counter;
+
+
+----countersList.jsx-----
+
+import React, {useState} from 'react';
+import Counter from "./counter";
+
+const СountersList = () => {
+
+    const initialState = [
+        {id : 0, value: 0, name:'Ложка'},
+        {id : 1, value: 4, name:'Тарелка'},
+        {id : 2, value: 0, name:'Вилка'}
+    ];
+        
+    const [counters, setCounters] = useState(initialState);
+    
+    console.log(counters);
+
+    const handleDelete = (id) => {
+        console.log('handleDelete', id);
+        const newCounters = counters.filter(c => c.id !== id); 
+        setCounters(newCounters);
+    };
+
+    const handleReset = () => {
+        //console.log('handleReset');
+        setCounters(initialState);
+    };
+
+    const handleIncrement = (id) => {
+        const elementIndex = counters.findIndex(c => c.id === id);
+        const newCounters = [...counters];
+        newCounters[elementIndex].value++;
+        setCounters(newCounters);
+    };
+
+    const handleDecrement = (id) => {
+        const elementIndex = counters.findIndex(c => c.id === id);
+        const newCounters = [...counters];
+        newCounters[elementIndex].value--;
+        setCounters(newCounters);
+    };
+
+    const handleUpdate = () => {
+        const updateState = [
+            {id : 0, value: 5, name:'Ложка'},
+            {id : 1, value: 9, name:'Тарелка'},
+            {id : 2, value: 11, name:'Вилка'}
+        ];
+        setCounters(updateState);
+    };
+
+    return (
+        <>
+            {counters.map((count) => (
+                <Counter
+                    key={count.id}
+                    {...count}
+                    onDelete={handleDelete} onIncrement={handleIncrement} onDecrement={handleDecrement} />
+            ))}
+            <button onClick={handleReset}>Сброс</button>
+            <button onClick={handleUpdate}>Новое состояние</button>
+        </>
+    )
+};
+
+export default СountersList;
+
+-------------------------------------------------------------------------
+---------[SW.BAND] 13. Практическое задание #2.mp4
+-------------------------------------------------------------------------
+Мой пример внутри fast-company
+В проекте hw2 - уже разбитый на компоненты код
